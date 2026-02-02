@@ -1,20 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Installing dev tools via Nix profile..."
+echo "Installing development tools via nix profile..."
 
-nix profile install \
-  nixpkgs#ruby \
-  nixpkgs#kamal \
-  nixpkgs#nodejs \
-  nixpkgs#bun \
-  nixpkgs#php
+nix profile add nixpkgs#ruby nixpkgs#kamal nixpkgs#nodejs nixpkgs#bun nixpkgs#php
 
 echo "----------------------------------------"
-ruby -v
-kamal version
-node -v
-bun -v
-php -v
+echo "Nix profile packages installed:"
+nix profile list
 echo "----------------------------------------"
-echo "All tools installed via Nix profile"
