@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# Ensure ~/.local/bin is available
-export PATH="$HOME/.local/bin:$PATH"
-
 # Ensure base tools
 sudo pacman -S --needed --noconfirm curl git
 
@@ -13,17 +10,13 @@ if ! command -v mise >/dev/null 2>&1; then
   curl -fsSL https://mise.jdx.dev/install.sh | sh
 fi
 
-# Activate mise for this shell
-eval "$(mise activate bash)"
-
-# Optional global runtimes (example)
-# mise use -g node@lts
-# mise use -g bun@latest
-
 # Enable mise automatically in bash
 if ! grep -q 'mise activate bash' "$HOME/.bashrc"; then
-  echo 'eval "$(mise activate bash)"' >> "$HOME/.bashrc"
+  # eval "$(/home/username/.local/bin/mise activate bash)"
+  # echo 'eval "$(mise activate bash)"' >> "$HOME/.bashrc"
 fi
+
+source ~/.bashrc
 
 echo "----------------------------------------"
 echo "mise installed and configured"
