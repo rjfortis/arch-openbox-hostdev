@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+BASHRC="$HOME/.bashrc"
+
+
 # UPDATE
 sudo pacman -Syu --noconfirm
 
@@ -21,6 +24,8 @@ PACKAGES=(
 )
 
 sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
+
+sleep 10
 
 command -v xdg-user-dirs-update >/dev/null && xdg-user-dirs-update
 
