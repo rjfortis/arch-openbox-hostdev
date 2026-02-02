@@ -108,3 +108,84 @@ Once authenticated, the machine will appear in your Tailscale network.
 tailscale status
 tailscale ip
 ```
+
+
+
+
+Sí, totalmente 👍
+Esto es **oro para la documentación**, porque reduce fricción todos los días.
+
+Te dejo una versión **pulida, clara y copy-paste friendly** para el README, con un flujo lógico y pequeñas mejoras.
+
+---
+
+## SSH connection (Recommended)
+
+This section shows a simple and clean way to access the remote PC using SSH.
+
+### 1. Copy your SSH key to the remote machine
+
+From your local machine:
+
+```bash
+ssh-copy-id user@<IP_ADDRESS>
+```
+
+After this, you should be able to log in **without a password**.
+
+---
+
+### 2. Create or edit your SSH config
+
+```bash
+nano ~/.ssh/config
+```
+
+Add an entry like this:
+
+```sshconfig
+Host pc-name
+  HostName <IP_ADDRESS>
+  User username
+  IdentityFile ~/.ssh/id_ed25519
+
+  # Port forwarding (optional)
+  LocalForward 8000 localhost:8000
+  LocalForward 3000 localhost:3000
+```
+
+Save and exit.
+
+---
+
+### 3. Connect using the alias
+
+Now you can simply run:
+
+```bash
+ssh pc-name
+```
+
+---
+
+### Notes
+
+* `pc-name` can be anything (e.g. `arch-dev`, `home-server`, `vm-arch`)
+* `LocalForward` is useful for:
+
+  * Web apps (Rails, Laravel, Node, etc.)
+  * Dashboards
+  * Dev servers running on the remote PC
+* You can add or remove forwarded ports as needed
+
+---
+
+### Optional: Quick test
+
+```bash
+ssh pc-name
+hostname
+```
+
+If it connects instantly without asking for a password, everything is set ✅
+
