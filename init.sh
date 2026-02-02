@@ -1,40 +1,39 @@
 #!/bin/bash
-set -o pipefail
+set -euo pipefail
 
 # UPDATE
 sudo pacman -Syu --noconfirm
 
 # BASE
-SYSTEM_BASE="ca-certificates which wget rsync git dmidecode usbutils"
-
 # x11
-GRAPHICS="xorg-server xorg-xinit dbus mesa"
-
 # GUI
-DESKTOP="openbox xterm pcmanfm gvfs xdg-utils xdg-user-dirs"
-
 # DEV & TERM
-DEV_TOOLS="neovim ripgrep python jq direnv bash-completion xclip htop"
-# alacritty
-
 # FONTS & FILES
-FILES_FONTS="zip unzip ttf-liberation ttf-dejavu"
-
 # OTHER APPS
-BROWSER="firefox"
 
-sudo pacman -S --needed --noconfirm $SYSTEM_BASE $GRAPHICS $DESKTOP $DEV_TOOLS $FILES_FONTS $BROWSER
+PACKAGES=(
+  ca-certificates which wget rsync git dmidecode usbutils
+  xorg-server xorg-xinit dbus mesa
+  openbox xterm pcmanfm gvfs xdg-utils xdg-user-dirs
+  neovim ripgrep python jq direnv bash-completion xclip htop
+  zip unzip ttf-liberation ttf-dejavu
+  firefox
+)
 
-xdg-user-dirs-update
+sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
 
-# OPENBOX CONFIG
+command -v xdg-user-dirs-update >/dev/null && xdg-user-dirs-update
+
+
+# xinitrc & OPENBOX CONFIG
 mkdir -p ~/.config/openbox
 
+[ -f ~/.xinitrc ] && cp ~/.xinitrc ~/.xinitrc.bak
 
-cat <<EOF > ~/.xinitrc
+cat <<'EOF' > ~/.xinitrc
 if [ -d /etc/X11/xinit/xinitrc.d ]; then
-  for f in /etc/X11/xinit/xinitrc.d/*; then
-    [ -x "\$f" ] && . "\$f"
+  for f in /etc/X11/xinit/xinitrc.d/*; do
+    [ -x "$f" ] && . "$f"
   done
   unset f
 fi
@@ -42,7 +41,11 @@ fi
 exec openbox-session
 EOF
 
-cat <<EOF > ~/.config/openbox/menu.xml
+# Backup existing menu if present
+[ -f ~/.config/openbox/menu.xml ] && \
+  cp ~/.config/openbox/menu.xml ~/.config/openbox/menu.xml.bak
+
+cat <<'EOF' > ~/.config/openbox/menu.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <openbox_menu xmlns="http://openbox.org/3.4/menu">
 
@@ -56,9 +59,9 @@ cat <<EOF > ~/.config/openbox/menu.xml
   <item label="PCManFM">
     <action name="Execute"><execute>pcmanfm</execute></action>
   </item>
-  
+
   <separator />
-  
+
   <item label="Reconfigure">
     <action name="Reconfigure" />
   </item>
