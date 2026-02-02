@@ -25,6 +25,17 @@ sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
 command -v xdg-user-dirs-update >/dev/null && xdg-user-dirs-update
 
 
+# Bash completion
+if ! grep -q "bash-completion/bash_completion" "$BASHRC" 2>/dev/null; then
+cat >> "$BASHRC" <<'EOF'
+
+# Bash completion
+if [ -r /usr/share/bash-completion/bash_completion ]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+EOF
+fi
+
 # xinitrc & OPENBOX CONFIG
 mkdir -p ~/.config/openbox
 

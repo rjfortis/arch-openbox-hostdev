@@ -7,6 +7,7 @@ SCRIPTS=(
   "nix.sh"
   "nix-profile.sh"
   "tailscale.sh"
+  "lazyvim.sh"
 )
 
 echo "======================================"
@@ -30,3 +31,5 @@ done
 echo "======================================"
 echo " System setup completed successfully ✅"
 echo "======================================"
+sleep 5
+reboot

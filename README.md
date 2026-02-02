@@ -1,22 +1,54 @@
 # Arch Openbox Host Dev Setup
 
-This repository provides a simple, modular setup to prepare an **Arch Linux** system with **Openbox** for development and container-based workflows.
+## Remote Arch Installation (Base System)
 
-The setup is split into small scripts and orchestrated by a single `setup.sh` file.
+This project includes an **`arch.sh`** script to install the Arch Linux base system remotely over SSH.
+This step is intended to be executed **from the Arch ISO environment** as the very first step.
+
+### 1. Boot the target PC with Arch ISO
+
+You should see the prompt:
+
+```bash
+root@archiso
+```
+
+### 2. Set a root password (required for SSH)
+
+```bash
+passwd
+```
+
+### 3. Get the IP address of the target PC
+
+```bash
+ip a
+```
+
+Take note of the IP address.
+
+### 4. From a second PC (assistant machine), connect via SSH
+
+```bash
+ssh root@<IP_ADDRESS>
+```
+
+### 5. Clone the repository and run the installer
+
+```bash
+git clone https://github.com/rjfortis/arch-openbox-hostdev.git
+cd arch-openbox-hostdev
+chmod +x arch.sh
+./arch.sh
+```
+
+> ⚠️ The system will **reboot automatically** once the base installation finishes.
 
 ---
 
-## Requirements
+## Setup (Post-install)
 
-- Arch Linux
-- Internet connection
-- A non-root user with `sudo` privileges
-
----
-
-## Installation
-
-Clone the repository:
+After the system boots into the newly installed Arch environment, log in as your user and run:
 
 ```bash
 git clone https://github.com/rjfortis/arch-openbox-hostdev.git
@@ -25,34 +57,54 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-## What `setup.sh` does
+This will install:
 
-The `setup.sh` script runs the following files **in order**:
-
-1. `init.sh` – Base system initialization
-2. `docker.sh` – Docker installation and configuration
-3. `nix.sh` – Nix package manager installation
-4. `nix-profile.sh` – Development tools installed via `nix profile`
-
-If any step fails, the setup stops immediately.
-
----
-
-## Notes
-
-* After Docker installation, **log out and log back in** (or run `newgrp docker`) to apply group changes.
-* You may need to restart your terminal after the setup completes.
+* Openbox desktop
+* Development tools
+* Docker
+* Nix / Nix profile tools
+* Tailscale
+* Lazyvim
+* Additional system utilities
 
 ---
 
-## Usage
+## Why this structure is good
 
-This setup is intended for:
+* `arch.sh` → **one-time, destructive, base install**
+* `setup.sh` → **safe, repeatable, post-install setup**
+* Clean separation of responsibilities
+* Perfect for remote installs and reprovisioning
 
-* Development environments
-* Docker-based workflows
-* Isolated tooling via Nix
-* Lightweight Openbox desktops
+## Optional: Git & SSH setup
 
-Feel free to modify the scripts to fit your workflow.
+```bash
+chmod +x git-ssh.sh
+./git-ssh.sh
+```
 
+## Post-install: Tailscale
+
+After the system is installed and `tailscaled` is running, you must authenticate the machine:
+
+```bash
+sudo tailscale up
+```
+
+This will:
+
+* Open a browser for authentication **or**
+* Print a login URL if no browser is available
+
+Once authenticated, the machine will appear in your Tailscale network.
+
+> ℹ️ You only need to do this **once per machine**.
+
+---
+
+### Optional checks
+
+```bash
+tailscale status
+tailscale ip
+```
