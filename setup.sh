@@ -6,6 +6,7 @@ SCRIPTS=(
   "docker.sh"
   "nix.sh"
   "nix-profile.sh"
+  "tailscale.sh"
 )
 
 echo "======================================"
