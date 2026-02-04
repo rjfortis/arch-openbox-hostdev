@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 1. Install Docker
-sudo pacman -S --needed --noconfirm docker docker-buildx
+sudo pacman -S --needed --noconfirm docker docker-compose docker-buildx
 
 # 2. Enable Docker service
 sudo systemctl enable --now docker.service
