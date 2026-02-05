@@ -24,17 +24,29 @@ NIX_CONF_FILE="$NIX_CONF_DIR/nix.conf"
 mkdir -p "$NIX_CONF_DIR"
 
 if ! grep -q "experimental-features" "$NIX_CONF_FILE" 2>/dev/null; then
-  echo "experimental-features = nix-command flakes" >> "$NIX_CONF_FILE"
+  echo "experimental-features = nix-command flakes" >>"$NIX_CONF_FILE"
 fi
 
-# 5. Ensure Nix environment is loaded in bash
+# User Nixpkgs config (for allowUnfree)
+NIXPKGS_CONFIG_DIR="$HOME/.config/nixpkgs"
+NIXPKGS_CONFIG_FILE="$NIXPKGS_CONFIG_DIR/config.nix"
+
+# Configure allowUnfree
+mkdir -p "$NIXPKGS_CONFIG_DIR"
+cat <<EOF >"$NIXPKGS_CONFIG_FILE"
+{
+  allowUnfree = true;
+}
+EOF
+
+# Ensure Nix environment is loaded in bash
 NIX_PROFILE_LINE='[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ] && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 
 if ! grep -qF "$NIX_PROFILE_LINE" "$HOME/.bashrc"; then
-  echo "$NIX_PROFILE_LINE" >> "$HOME/.bashrc"
+  echo "$NIX_PROFILE_LINE" >>"$HOME/.bashrc"
 fi
 
-# 6. Apply changes to the current session
+# Apply changes to the current session
 export NIX_REMOTE=daemon
 if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
   . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -43,3 +55,4 @@ fi
 echo ""
 echo "Nix installation completed successfully."
 echo "IMPORTANT: Restart your terminal or run 'source ~/.bashrc' to start using Nix."
+

@@ -1,0 +1,59 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+
+# Bash completion
+if [ -r /usr/share/bash-completion/bash_completion ]; then
+  source /usr/share/bash-completion/bash_completion
+fi
+[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ] && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+
+eval "$(/home/rfmdev/.local/bin/mise activate bash)"
+
+
+clean_claude() {
+    echo "Select Claude Code cleaning level:"
+    echo "1) Only junk files (config/cache in HOME)"
+    echo "2) TOTAL cleaning (Nix + Junk files)"
+    echo "3) Cancel"
+    read -p "Option [1-3]: " opt
+
+    case $opt in
+        1)
+            echo "Deleting junk files in $HOME..."
+            rm -rf ~/.claude*
+            rm -rf ~/.local/share/claude
+            rm -rf ~/.config/claude-code
+            rm -rf ~/.cache/claude-code
+            echo "Done."
+            ;;
+        2)
+            echo "Starting TOTAL cleaning..."
+            echo "Removing from Nix Profile..."
+            nix profile remove claude-code 2>/dev/null || echo "Package not found in profile."
+            nix profile wipe-history
+            echo "Running Nix Garbage Collector..."
+            nix-store --gc
+
+            echo "Deleting junk files in $HOME..."
+            rm -rf ~/.claude*
+            rm -rf ~/.local/share/claude
+            rm -rf ~/.config/claude-code
+            rm -rf ~/.cache/claude-code
+            echo "Deep cleaning completed."
+            ;;
+        3)
+            echo "Operation cancelled."
+            ;;
+        *)
+            echo "Invalid option."
+            ;;
+    esac
+}
