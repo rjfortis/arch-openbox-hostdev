@@ -3,7 +3,11 @@ set -euo pipefail
 
 echo "Installing development tools via nix profile..."
 
-nix profile add nixpkgs#ruby nixpkgs#kamal nixpkgs#nodejs nixpkgs#bun nixpkgs#php nixpkgs#opencode
+nix profile add nixpkgs#ruby nixpkgs#kamal nixpkgs#php nixpkgs#opencode nixpkgs#gemini-cli-bin
+
+# nixpkgs#bun nixpkgs#nodejs
+
+# USAGE: opencode claude gemini
 
 sleep 2
 
